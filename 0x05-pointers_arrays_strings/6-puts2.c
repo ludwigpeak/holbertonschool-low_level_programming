@@ -1,4 +1,10 @@
 #include "main.h"
+/**
+ * puts2 - writes every other character
+ * @str: input string to print
+ * Description: prints every other character of string
+ * Return: nothing
+ **/
 void puts2(char *str)
 {
 	int i, j;
