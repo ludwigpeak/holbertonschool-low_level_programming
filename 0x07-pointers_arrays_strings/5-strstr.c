@@ -1,24 +1,47 @@
 #include "main.h"
 /**
- * _strpbrk - searches a string for any of a set of bytes
- * @s: string to search
- * @accept: set of bytes to search for
- * Description: retruns first occurrence in a string
- * Return: pointer to first instance of string
-**/
+ * compare - compares two strings
+ * @haystack: source string
+ * @needle: string being compared
+ * Description: checks if needle is at start of haystack
+ * Return: 1 if matches, 0 if not
+ **/
 
-char *_strpbrk(char *s, char *accept)
+int compare(char *haystack, char *needle)
 {
-	int i, j;
+	int i;
 
-	for (i = 0; s[i] != '\0'; i++)
+	for (i = 0; needle[i] != '\0'; i++)
 	{
-		for (j = 0; accept[j] != '\0'; j++)
+		if (haystack[i] == '\0')
+			return (0);
+		if (haystack[i] != needle[i])
+			return (0);
+	}
+	return (1);
+}
+
+/**
+ * _strstr - locates a substring
+ * @haystack: source string
+ * @needle: substring
+ * Description: finds first instance of needle in haystack
+ * Return: pointer to first instance, NULL if not in haystack
+ **/
+
+char *_strstr(char *haystack, char *needle)
+{
+	int j;
+
+	if (needle[0] == '\0')
+		return (haystack);
+
+	for (j = 0; haystack[j] != '\0'; j++)
+	{
+		if (needle[0] == haystack[j])
 		{
-			if (accept[j] == s[i])
-			{
-				return (&s[i]);
-			}
+			if (compare(&haystack[j], needle) == 1)
+				return (&haystack[j]);
 		}
 	}
 	return (NULL);
