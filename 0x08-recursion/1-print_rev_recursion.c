@@ -19,6 +19,3 @@ else
 _putchar(r[0]);
 }
 }
-	     
-  
-		 
