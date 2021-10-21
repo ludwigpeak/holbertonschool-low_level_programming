@@ -19,20 +19,20 @@ return (_strlen_recursion(&s[1]) + 1);
 }
 }
 /**
- * pd - check if string is a palindrome
+ * pali - check if string is a palindrome
  * @s: string to check
  * @n: sizes of string -1
  * @i : counter trough string
  * Description: Determines if string is a palindrome
  * Return: 1 id palindrome, 0 if not
  **/
-int pd(char *s, int n, int i)
+int pali(char *s, int n, int i)
 {
 if (n <= i)
 return (1);
 if (s[i] != s[n])
 return (0);
-return (pd(s, n -1, i + 1));
+return (pali(s, n -1, i + 1));
 }
 /**
  * is_palindrome -checks if string is a palindrome
@@ -42,5 +42,5 @@ return (pd(s, n -1, i + 1));
  **/
 int is_palindrome(char *s)
 {
-return (pd(s, _strlen_recursion(s) - 1, 0));
+return (pali(s, _strlen_recursion(s) - 1, 0));
 }
