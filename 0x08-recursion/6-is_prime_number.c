@@ -4,7 +4,7 @@
  * @n : test case
  * @i : recurring factor
  * Description :determine if n is a prime using two parameters
- * Return : 1 if n is a prime, 0 if not
+ * Return: 1 if n is a prime, 0 if not
  **/
 int primo(int n, int i)
 {
