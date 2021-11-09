@@ -1,86 +1,91 @@
 #include <stdio.h>
 #include  <stdarg.h>
-void _printf(char* , . . . );
+#include "main.h"
+void cleanup(va_list args, buffer_t *output);
+int run_printf(const char *format, va_list args, buffer_t *output);
+int _printf(const char *format, ...);
 
-//La función printf
-
-char* convertido (unsigned int, int); //convierte int en octal, hexal, etc.
-
-int main ()
+/**
+ * cleanup - Peforms cleanup operations for _printf.
+ * @args: A va_list of arguments provided to _printf.
+ * @output: A buffer_t struct.
+ */
+void cleanup(va_list args, buffer_t *output)
 {
-
-  _printf(“Hello, World \n %d, 9);
-
-  return 0;
-
+	va_end(args);
+	write(1, output->start, output->len);
+	free_buffer(output);
 }
 
-void _printf (char* format, . . . )
+/**
+ * run_printf - Reads through the format string for _printf.
+ * @format: Character string to print - may contain directives.
+ * @output: A buffer_t struct containing a buffer.
+ * @args: A va_list of arguments.
+ *
+ * Return: The number of characters stored to output.
+ */
+int run_printf(const char *format, va_list args, buffer_t *output)
 {
-  char *try;
-  unsigned int i;
-  char *s;
+	int i, wid, prec, ret = 0;
+	char tmp;
+	unsigned char flags, len;
+	unsigned int (*f)(va_list, buffer_t *,
+			unsigned char, int, int, unsigned char);
 
-  // inicializa el agurmento Myprintf
-
-  va_list arg;
-  va_start (arg, format);
-
-  for(try = format; *try  != ‘ \0’; try++)
-    {
-      while ( *try != ‘%’ )
+	for (i = 0; *(format + i); i++)
 	{
-	  putchar(*try);
-	  try++;
+		len = 0;
+		if (*(format + i) == '%')
+		{
+			tmp = 0;
+			flags = handle_flags(format + i + 1, &tmp);
+			wid = handle_width(args, format + i + tmp + 1, &tmp);
+			prec = handle_precision(args, format + i + tmp + 1,
+					&tmp);
+			len = handle_length(format + i + tmp + 1, &tmp);
+
+			f = handle_specifiers(format + i + tmp + 1);
+			if (f != NULL)
+			{
+				i += tmp + 1;
+				ret += f(args, output, flags, wid, prec, len);
+				continue;
+			}
+			else if (*(format + i + tmp + 1) == '\0')
+			{
+				ret = -1;
+				break;
+			}
+		}
+		ret += _memcpy(output, (format + i), 1);
+		i += (len != 0) ? 1 : 0;
 	}
-      try++;
-
-      //recopilando y ejecutando argumentos
-
-      switch (*try)
-	{
-	case ‘c’ > i )va_arg (arg, int); // recopila char
-      putchar(i);
-      break;
-
-    case ‘d’ : i = va_arg (arg, int); recopila int
-					if (i < 0)
-					  {
-					    i = -i;
-					    putchar (’-’);
-					  }
-      puts(convert(i, 10));
-      break;
-
-    case ’o’ : i = va_arg(arg, unsigned int); //recopila representación octal
-      puts(convert(i, 8 ));
-      break;
-
-    case ’s’ : s = va_arg(arg, char *); //recopila string
-      puts(s);
-      break;
-
-      chase ’x’ : i = va_arg(arg, unsigned int); // recopila hexadecimal
-      puts(convert(i, 16));
-      break;
-    }
+	cleanup(args, output);
+	return (ret);
 }
 
-//cierre de lista de argumentos necesaria para clean-up
-va_end(arg);
-}
-
-char *convert(unsigned int num, int base)
+/**
+ * _printf - Outputs a formatted string.
+ * @format: Character string to print - may contain directives.
+ *
+ * Return: The number of characters printed.
+ */
+int _printf(const char *format, ...)
 {
-  static char Representation [] = “0123456789ABCDEF”;
-  static char buffer [50];
-  char *m;
-  m = &buffer [49];
-  *m = ’\0’;
-  do
-    {
-      *—m = Representation(num%base];
-      num /= base;
-    }while (num != 0);
-  return (m);
+	buffer_t *output;
+	va_list args;
+	int ret;
+
+	if (format == NULL)
+		return (-1);
+	output = init_buffer();
+	if (output == NULL)
+		return (-1);
+
+	va_start(args, format);
+
+	ret = run_printf(format, args, output);
+
+	return (ret);
 }
